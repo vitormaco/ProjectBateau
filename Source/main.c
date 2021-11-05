@@ -4,16 +4,16 @@
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
+#include <stdio.h>
 
 int main(void)
 {
-	char direction;
-	char speed;
 	char str[5];
 
 	/******************  GPIO Setup  *******************/
 
 	GPIO_SetupClocks(GPIOA_CLOCK);
+	GPIO_SetupClocks(GPIOC_CLOCK);
 
 	// PA6 - Plateau
 	GPIO_Init(GPIOA, GPIOA_TIMER3_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
@@ -30,6 +30,15 @@ int main(void)
 	// PA0 - Battery ADC
 	GPIO_Init(GPIOA, GPIOA_ADC1_INPUT0, INPUT_ANALOG);
 
+	// PA5 - Rotary Encoder IDX
+	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_IDX, INPUT_PULL_UP_DOWN);
+
+	// PA6 - Rotary Encoder PHA
+	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_PHA, INPUT_PULL_UP_DOWN);
+
+	// PA8 - Rotary Encoder PHB
+	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_PHB, INPUT_PULL_UP_DOWN);
+
 	/******************  Timers Setup  *******************/
 
 	Timer_SetupClocks(TIMER3_CLOCK);
@@ -37,10 +46,11 @@ int main(void)
 
 	/******************  ADC Setup  *******************/
 
-	init_ADC();
-	
+	ADC_init();
+
 	/******************  UART Setup  *******************/
-	init_UART(&direction, &speed);
+
+	UART_init();
 
 	/******************  Interruptions  *******************/
 
@@ -50,12 +60,10 @@ int main(void)
 	/******************  Start execution  *******************/
 
 	Timer_Start(TIM3);
-	ADC1->CR2 |= ADC_CR2_ADON;
+	ADC_Start(ADC1);
 
 	while (1)
 	{
-		Timer_Set_PWM_DutyCycle(TIM3, speed);
-		direction ? GPIO_Set(GPIOA, GPIOA_DIRECTION_PLATEAU) : GPIO_Reset(GPIOA, GPIOA_DIRECTION_PLATEAU);
 		sprintf(str, "%d", ADC1->DR * 13 / 12);
 		write_message(str);
 	};

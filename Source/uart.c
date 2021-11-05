@@ -1,13 +1,10 @@
 #include "stm32f10x.h"
 #include "BSP.h"
+#include "timer.h"
+#include "gpio.h"
 
-char *direction;
-char *speed;
-
-void init_UART(char *dir, char *spd)
+void UART_init()
 {
-	direction = dir;
-	speed = spd;
 	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 	USART1->BRR |= (int)BOARD_CPU_FREQUENCY / USART1_BAUD_RATE;
 	USART1->CR1 |= USART_CR1_UE;
@@ -22,8 +19,12 @@ void init_UART(char *dir, char *spd)
 void USART1_IRQHandler()
 {
 	char value_read = USART1->DR;
-	*direction = value_read > 0x64;
-	*speed = *direction ? ~value_read : value_read;
+	// 0x01~0x63 -> right
+	// 0x64~0xFF -> left
+	char direction = value_read > 0x64;
+	char speed = direction ? ~value_read : value_read;
+	Timer_Set_PWM_DutyCycle(TIM3, speed);
+	direction ? GPIO_Set(GPIOA, GPIOA_DIRECTION_PLATEAU) : GPIO_Reset(GPIOA, GPIOA_DIRECTION_PLATEAU);
 }
 
 void write_message(char message[])
@@ -34,9 +35,11 @@ void write_message(char message[])
 	{
 		USART1->DR = message[i];
 		while (!(USART1->SR & USART_SR_TC))
-			;
+		{
+		};
 	}
 	USART1->DR = '\n';
 	while (!(USART1->SR & USART_SR_TC))
-		;
+	{
+	};
 }

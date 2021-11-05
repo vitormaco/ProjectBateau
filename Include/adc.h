@@ -1,3 +1,4 @@
 #include "stm32f10x.h"
 
-void init_ADC();
+void ADC_init(void);
+void ADC_Start(ADC_TypeDef *ADC);

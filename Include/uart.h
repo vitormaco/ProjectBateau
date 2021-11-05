@@ -2,4 +2,4 @@
 
 void USART1_IRQHandler(void);
 void write_message(char message[]);
-void init_UART(char *dir, char *spd);
+void UART_init(void);
