@@ -27,7 +27,8 @@ void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
 	Timer->DIER |= TIM_DIER_UIE;
 }
 
-void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent) {
+void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent)
+{
 	int dutyCycleInClocks = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
 	Timer->CCR1 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
 }

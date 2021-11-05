@@ -398,6 +398,11 @@
               <FileType>5</FileType>
               <FilePath>.\Include\timer.h</FilePath>
             </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Include\uart.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -417,6 +422,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -820,6 +830,11 @@
               <FileType>5</FileType>
               <FilePath>.\Include\timer.h</FilePath>
             </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Include\uart.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -839,6 +854,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\uart.c</FilePath>
             </File>
           </Files>
         </Group>

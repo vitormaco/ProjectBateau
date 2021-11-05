@@ -4,23 +4,22 @@
 #include "timer.h"
 #include "uart.h"
 
-
-
 int main(void)
 {
 	char direction;
 	char speed;
 	char str[5];
+
 	/******************  GPIO Setup  *******************/
 
 	GPIO_SetupClocks(GPIOA_CLOCK);
-	
+
 	// PA6 - Plateau
 	GPIO_Init(GPIOA, GPIOA_TIMER3_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
-	
+
 	// PA8 - Direction Plateau
 	GPIO_Init(GPIOA, GPIOA_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
-	
+
 	// PA9 - Xbee USART TX
 	GPIO_Init(GPIOA, GPIOA_USART1_TX, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
@@ -30,7 +29,6 @@ int main(void)
 	// PA0 - Battery ADC
 	GPIO_Init(GPIOA, GPIOA_ADC1_INPUT0, INPUT_ANALOG);
 
-	
 	/******************  Timers Setup  *******************/
 
 	Timer_SetupClocks(TIMER3_CLOCK);
@@ -42,9 +40,9 @@ int main(void)
 	ADC1->CR2 |= ADC_CR2_CONT;
 	ADC1->CR2 |= ADC_CR2_ADON;
 
-  /******************  UART Setup  *******************/
+	/******************  UART Setup  *******************/
 	init_UART(&direction, &speed);
-	
+
 	/******************  Interruptions  *******************/
 
 	NVIC_EnableIRQ(USART1_IRQn);
@@ -59,8 +57,7 @@ int main(void)
 	{
 		Timer_Set_PWM_DutyCycle(TIM3, speed);
 		direction ? GPIO_Set(GPIOA, GPIOA_DIRECTION_PLATEAU) : GPIO_Reset(GPIOA, GPIOA_DIRECTION_PLATEAU);
-		sprintf(str, "%d", ADC1->DR*13/12);
+		sprintf(str, "%d", ADC1->DR * 13 / 12);
 		write_message(str);
 	};
 }
-
