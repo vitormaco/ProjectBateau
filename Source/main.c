@@ -2,25 +2,15 @@
 #include "BSP.h"
 #include "gpio.h"
 #include "timer.h"
+#include "uart.h"
 
-char direction;
-char speed;
 
-char str[5];
-
-void write_message(char message[]) {
-	int i;
-	USART1->CR1 |= USART_CR1_TE;
-	for (i=0; message[i]!='\0';i++) {
-		USART1->DR = message[i];
-		while (!(USART1->SR & USART_SR_TC));
-	}
-	USART1->DR = '\n';
-	while (!(USART1->SR & USART_SR_TC));
-}
 
 int main(void)
 {
+	char direction;
+	char speed;
+	char str[5];
 	/******************  GPIO Setup  *******************/
 
 	GPIO_SetupClocks(GPIOA_CLOCK);
@@ -52,19 +42,10 @@ int main(void)
 	ADC1->CR2 |= ADC_CR2_CONT;
 	ADC1->CR2 |= ADC_CR2_ADON;
 
-  // UART ----------
-
-	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-	USART1->BRR |= (int) 72000000/USART1_BAUD_RATE;
-	USART1->CR1 |= USART_CR1_UE;
-	USART1->CR1 &= ~USART_CR1_M;
-	USART1->CR2 &= ~USART_CR2_STOP;
+  /******************  UART Setup  *******************/
+	init_UART(&direction, &speed);
 	
-	USART1->CR1 |= USART_CR1_TE;
-	USART1->CR1 |= USART_CR1_RE;
-	USART1->CR1 |= USART_CR1_RXNEIE;
-
-	// Interruptions
+	/******************  Interruptions  *******************/
 
 	NVIC_EnableIRQ(USART1_IRQn);
 	NVIC_SetPriority(USART1_IRQn, 10);
@@ -80,13 +61,6 @@ int main(void)
 		direction ? GPIO_Set(GPIOA, GPIOA_DIRECTION_PLATEAU) : GPIO_Reset(GPIOA, GPIOA_DIRECTION_PLATEAU);
 		sprintf(str, "%d", ADC1->DR*13/12);
 		write_message(str);
-		//ADC1->DR;
 	};
 }
 
-
-void USART1_IRQHandler () {
-	char value_read = USART1->DR;
-	direction = value_read > 0x64;
-	speed = direction ? ~value_read : value_read;
-}
