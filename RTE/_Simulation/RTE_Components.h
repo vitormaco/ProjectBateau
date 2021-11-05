@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'adc' 
+ * Project: 'project_bateau' 
  * Target:  'Simulation' 
  */
 
