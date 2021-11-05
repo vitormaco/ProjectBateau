@@ -3,6 +3,7 @@
 #include "gpio.h"
 #include "timer.h"
 #include "uart.h"
+#include "adc.h"
 
 int main(void)
 {
@@ -36,10 +37,8 @@ int main(void)
 
 	/******************  ADC Setup  *******************/
 
-	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-	ADC1->CR2 |= ADC_CR2_CONT;
-	ADC1->CR2 |= ADC_CR2_ADON;
-
+	init_ADC();
+	
 	/******************  UART Setup  *******************/
 	init_UART(&direction, &speed);
 
