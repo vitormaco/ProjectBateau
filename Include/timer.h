@@ -14,6 +14,7 @@ typedef enum TIMER_Clock
 void Timer_SetupClocks(TIMER_Clock_Type clock);
 void Timer_Init(TIM_TypeDef *Timer, int TriggerTimeInMs);
 void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent);
+void Timer_Init_Encoder_Mode(TIM_TypeDef *Timer);
 void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent);
 void Timer_Start(TIM_TypeDef *Timer);
 void Timer_Stop(TIM_TypeDef *Timer);

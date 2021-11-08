@@ -13,6 +13,7 @@ int main(void)
 	/******************  GPIO Setup  *******************/
 
 	GPIO_SetupClocks(GPIOA_CLOCK);
+	GPIO_SetupClocks(GPIOB_CLOCK);
 	GPIO_SetupClocks(GPIOC_CLOCK);
 
 	// PA6 - Plateau
@@ -31,18 +32,20 @@ int main(void)
 	GPIO_Init(GPIOA, GPIOA_ADC1_INPUT0, INPUT_ANALOG);
 
 	// PA5 - Rotary Encoder IDX
-	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_IDX, INPUT_PULL_UP_DOWN);
+	// GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_IDX, INPUT_PULL_UP_DOWN);
 
-	// PA6 - Rotary Encoder PHA
-	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_PHA, INPUT_PULL_UP_DOWN);
+	// PB6 - Timer Channel 1 - Rotary Encoder PHA
+	GPIO_Init(GPIOB, GPIOB_ROTARY_ENCODER_PHA, INPUT_PULL_UP_DOWN);
 
-	// PA8 - Rotary Encoder PHB
-	GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_PHB, INPUT_PULL_UP_DOWN);
+	// PB7 - Timer Channel 2 - Rotary Encoder PHB
+	GPIO_Init(GPIOB, GPIOB_ROTARY_ENCODER_PHB, INPUT_PULL_UP_DOWN);
 
 	/******************  Timers Setup  *******************/
 
 	Timer_SetupClocks(TIMER3_CLOCK);
-	Timer_Init_PWM_Mode(TIM3, 20);
+	Timer_SetupClocks(TIMER4_CLOCK);
+	Timer_Init_PWM_Mode(TIM3, 0);
+	Timer_Init_Encoder_Mode(TIM4);
 
 	/******************  ADC Setup  *******************/
 
@@ -64,7 +67,10 @@ int main(void)
 
 	while (1)
 	{
-		sprintf(str, "%d", ADC1->DR * 13 / 12);
+		// battery voltage
+		// sprintf(str, "%d", ADC1->DR * 13 / 12);
+		// girouette angle
+		sprintf(str, "%d", TIM4->CNT/4);
 		write_message(str);
 	};
 }

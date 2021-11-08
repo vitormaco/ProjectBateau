@@ -19,6 +19,14 @@ void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
 	Timer->DIER |= TIM_DIER_UIE;
 }
 
+void Timer_Init_Encoder_Mode(TIM_TypeDef *Timer){
+	Timer->ARR = 360*4;
+	Timer->SMCR |= TIM_SMCR_SMS & 0x3;
+	Timer->CCMR1 |= TIM_CCMR1_CC1S & 0x1;
+	Timer->CCMR1 |= TIM_CCMR1_CC2S & 0x1;
+	Timer->CR1 |= TIM_CR1_CEN;
+}
+
 void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent)
 {
 	int dutyCycleInClocks = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
