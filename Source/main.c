@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
+#include "spi.h"
 #include <stdio.h>
 
 int main(void)
@@ -21,6 +22,9 @@ int main(void)
 
 	// PA8 - Direction Plateau
 	GPIO_Init(GPIOA, GPIOA_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
+	
+	// PA2 - PWM Voilier
+	// GPIO_Init(GPIOA, GPIOA_TIMER9_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
 	// PA9 - Xbee USART TX
 	GPIO_Init(GPIOA, GPIOA_USART1_TX, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
@@ -40,6 +44,18 @@ int main(void)
 	// PB7 - Timer Channel 2 - Rotary Encoder PHB
 	GPIO_Init(GPIOB, GPIOB_ROTARY_ENCODER_PHB, INPUT_PULL_UP_DOWN);
 
+	// PA15 - SPI NSS
+	GPIO_Init(GPIOA, GPIOA_SPI_NSS, INPUT_PULL_UP_DOWN);
+
+	// PB3 - SPI SCK
+	GPIO_Init(GPIOB, GPIOB_SPI_SCK, INPUT_PULL_UP_DOWN);
+
+	// PB4 - SPI MISO
+	GPIO_Init(GPIOB, GPIOB_SPI_MISO, INPUT_PULL_UP_DOWN);
+
+	// PB5 - SPI MOSI
+	GPIO_Init(GPIOB, GPIOB_SPI_MOSI, INPUT_PULL_UP_DOWN);
+
 	/******************  Timers Setup  *******************/
 
 	Timer_SetupClocks(TIMER3_CLOCK);
@@ -54,7 +70,17 @@ int main(void)
 	/******************  UART Setup  *******************/
 
 	UART_init();
+	
+	/******************  AFIO - GPIO Remap Setup  *******************/
 
+	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+	AFIO->MAPR |= AFIO_MAPR_SPI1_REMAP;
+
+
+	/******************  SPI Setup  *******************/
+
+	SPI_init();
+	
 	/******************  Interruptions  *******************/
 
 	NVIC_EnableIRQ(USART1_IRQn);
@@ -63,6 +89,7 @@ int main(void)
 	/******************  Start execution  *******************/
 
 	Timer_Start(TIM3);
+	// Timer_Start(TIM5);
 	ADC_Start(ADC1);
 
 	while (1)
@@ -70,7 +97,9 @@ int main(void)
 		// battery voltage
 		// sprintf(str, "%d", ADC1->DR * 13 / 12);
 		// girouette angle
+		// Timer_Set_PWM_DutyCycle(TIM5, 50);
 		sprintf(str, "%d", TIM4->CNT/4);
 		write_message(str);
+		SPI_read_write_message(0x36);
 	};
 }

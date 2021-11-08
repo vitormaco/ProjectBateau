@@ -6,26 +6,17 @@
 void SPI_init()
 {
 	RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-
 	SPI1->CR1 |= SPI_CR1_MSTR;
 }
 
-char RW_message(int address)
+char SPI_read_write_message(int address)
 {
-	int txe;
-	int rxne;
-	
 	SPI1->CR1 |= SPI_CR1_SPE;
 	
-	txe = (SPI1->SR &= SPI_SR_TXE);
-	while(!(txe)) {
-	}
-	SPI1->DR |= address;
+	while(!(SPI1->SR & SPI_SR_TXE)) {}
+	SPI1->DR = address;
 	
-	rxne = (SPI1->SR &= SPI_SR_RXNE); 
-	while(!rxne) {
-	}
+	while(!(SPI1->SR & SPI_SR_RXNE)) {}
+
 	return SPI1->DR;
 }
-
-

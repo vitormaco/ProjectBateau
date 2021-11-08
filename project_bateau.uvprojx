@@ -408,6 +408,11 @@
               <FileType>5</FileType>
               <FilePath>.\Include\adc.h</FilePath>
             </File>
+            <File>
+              <FileName>spi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Include\spi.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -437,6 +442,11 @@
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -850,6 +860,11 @@
               <FileType>5</FileType>
               <FilePath>.\Include\adc.h</FilePath>
             </File>
+            <File>
+              <FileName>spi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Include\spi.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -879,6 +894,11 @@
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\spi.c</FilePath>
             </File>
           </Files>
         </Group>
