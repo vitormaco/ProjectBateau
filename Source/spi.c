@@ -36,7 +36,7 @@ int SPI_read_write_message(int address, int val)
 	while(!(SPI1->SR & SPI_SR_RXNE)) {}
 	poub = SPI1->DR;
 	while(!(SPI1->SR & SPI_SR_TXE)) {}
-	SPI1->DR = val; // ecrire n'importe quoi pour attendre la rÃ©ponse
+	SPI1->DR = val; // ecrire n'importe quoi pour attendre la réponse
 	while(!(SPI1->SR & SPI_SR_RXNE)) {}
 	val = SPI1->DR;
 	while(SPI1->SR & SPI_SR_BSY) {}
