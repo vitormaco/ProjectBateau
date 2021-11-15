@@ -13,6 +13,7 @@ void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
 	Timer->ARR = TIMER_PWM_PERIOD_IN_CLOCKS - 1;
 	Timer->CCR1 = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
 	Timer->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1PE; // PWM Mode 1
+	Timer->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2PE; // PWM Mode 1
 	Timer->CCER |= TIM_CCER_CC1E;
 	Timer->CR1 |= TIM_CR1_ARPE;
 	Timer->EGR |= TIM_EGR_UG;

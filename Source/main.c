@@ -20,11 +20,11 @@ int main(void)
 	// PA6 - Plateau
 	GPIO_Init(GPIOA, GPIOA_TIMER3_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
-	// PA8 - Direction Plateau
-	GPIO_Init(GPIOA, GPIOA_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
+	// PC4 - Direction Plateau
+	GPIO_Init(GPIOC, GPIOC_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
 	
-	// PA2 - PWM Voilier
-	// GPIO_Init(GPIOA, GPIOA_TIMER9_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
+	// PA1 - PWM Voilier
+	// GPIO_Init(GPIOA, GPIOA_TIMER2_PWM_OUTPUT_PIN2, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
 	// PA9 - Xbee USART TX
 	GPIO_Init(GPIOA, GPIOA_USART1_TX, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
@@ -58,9 +58,11 @@ int main(void)
 
 	/******************  Timers Setup  *******************/
 
+	Timer_SetupClocks(TIMER2_CLOCK);
 	Timer_SetupClocks(TIMER3_CLOCK);
 	Timer_SetupClocks(TIMER4_CLOCK);
 	Timer_Init_PWM_Mode(TIM3, 0);
+	Timer_Init_PWM_Mode(TIM2, 0);
 	Timer_Init_Encoder_Mode(TIM4);
 
 	/******************  ADC Setup  *******************/
@@ -89,7 +91,7 @@ int main(void)
 	/******************  Start execution  *******************/
 
 	Timer_Start(TIM3);
-	// Timer_Start(TIM5);
+	Timer_Start(TIM2);
 	ADC_Start(ADC1);
 
 	while (1)
