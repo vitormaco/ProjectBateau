@@ -48,7 +48,7 @@ int main(void)
 	GPIO_Init(GPIOA, GPIOA_SPI_NSS, OUTPUT_2MHZ_PUSH_PULL);
 
 	// PB3 - SPI SCK
-	GPIO_Init(GPIOB, GPIOB_SPI_SCK, OUTPUT_2MHZ_PUSH_PULL);
+	GPIO_Init(GPIOB, GPIOB_SPI_SCK, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
 	// PB4 - SPI MISO
 	GPIO_Init(GPIOB, GPIOB_SPI_MISO, INPUT_FLOATING);
@@ -96,7 +96,6 @@ int main(void)
 
 	while (1)
 	{
-		int result;
 		// battery voltage
 		// sprintf(str, "%d", ADC1->DR * 13 / 12);
 		// girouette angle
