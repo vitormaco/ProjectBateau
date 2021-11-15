@@ -18,6 +18,8 @@ void SPI_init()
 	
 	SPI1->CR1 |= SPI_CR1_SPE;
 	
+	SPI1->CR1 |= SPI_CR1_BR_2;
+	
 	GPIO_Set(GPIOA, GPIOA_SPI_NSS); 
 	
 }
