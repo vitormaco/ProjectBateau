@@ -6,10 +6,7 @@
 void SPI_init()
 {
 	RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-	SPI1->CR1 |= SPI_CR1_MSTR;
-	
-	SPI1->CR1 |= 0x011 << 3;
-	
+	SPI1->CR1 |= SPI_CR1_BR_2;
 	SPI1->CR1 |= SPI_CR1_CPOL;
 	SPI1->CR1 |= SPI_CR1_CPHA;
 	
@@ -17,10 +14,10 @@ void SPI_init()
 	SPI1->CR1 |= SPI_CR1_SSI;
 	
 	SPI1->CR1 |= SPI_CR1_SPE;
+	SPI1->CR1 |= SPI_CR1_MSTR;
 	
-	SPI1->CR1 |= SPI_CR1_BR_1;
 	
-	GPIO_Set(GPIOA, GPIOA_SPI_NSS); 
+	//GPIO_Set(GPIOA, GPIOA_SPI_NSS); 
 	
 }
 

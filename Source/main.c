@@ -10,6 +10,7 @@
 int main(void)
 {
 	char str[5];
+	int degree;
 
 	/******************  GPIO Setup  *******************/
 
@@ -98,10 +99,16 @@ int main(void)
 	{
 		// battery voltage
 		// sprintf(str, "%d", ADC1->DR * 13 / 12);
-		// girouette angle
-		Timer_Set_PWM_Servo(TIM2, 100*TIM4->CNT/(360*4));
+		// girouette 
+		degree = TIM4->CNT/4;
+		degree = degree < 180 ? degree : 360 - degree;
+		if ( degree < 45 ) {
+			Timer_Set_PWM_Servo(TIM2, 100);
+		} else {
+			Timer_Set_PWM_Servo(TIM2, 100 - 100 * (degree - 45) / 135);
+		}
 		sprintf(str, "%d", TIM4->CNT/4);
 		write_message(str);
-		SPI_read_write_message(0x36, 0x01);
+		SPI_read_write_message(0x36, 0x00);
 	};
 }

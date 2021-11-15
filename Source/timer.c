@@ -39,8 +39,7 @@ void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent)
 
 void Timer_Set_PWM_Servo(TIM_TypeDef *Timer, int percentage)
 {
-	int aaa = 5 + 5*percentage/100;
-	int dutyCycleInClocks = (aaa * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
+	int dutyCycleInClocks = ((5*TIMER_PWM_PERIOD_IN_CLOCKS + 5*TIMER_PWM_PERIOD_IN_CLOCKS*percentage/100*20/20) / 100) - 1;
 	Timer->CCR1 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
 	Timer->CCR2 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
 }
