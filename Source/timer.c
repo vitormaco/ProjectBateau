@@ -11,10 +11,12 @@ void Timer_SetupClocks(TIMER_Clock_Type clock)
 void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
 {
 	Timer->ARR = TIMER_PWM_PERIOD_IN_CLOCKS - 1;
+	Timer->PSC = TIMER_PWM_PERIOD_PRESCALER - 1;
 	Timer->CCR1 = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
+	Timer->CCR2 = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
 	Timer->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1PE; // PWM Mode 1
 	Timer->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2PE; // PWM Mode 1
-	Timer->CCER |= TIM_CCER_CC1E;
+	Timer->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E;
 	Timer->CR1 |= TIM_CR1_ARPE;
 	Timer->EGR |= TIM_EGR_UG;
 	Timer->DIER |= TIM_DIER_UIE;
@@ -32,6 +34,15 @@ void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent)
 {
 	int dutyCycleInClocks = (dutyCycleInPercent * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
 	Timer->CCR1 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
+	Timer->CCR2 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
+}
+
+void Timer_Set_PWM_Servo(TIM_TypeDef *Timer, int percentage)
+{
+	int aaa = 5 + 5*percentage/100;
+	int dutyCycleInClocks = (aaa * TIMER_PWM_PERIOD_IN_CLOCKS / 100) - 1;
+	Timer->CCR1 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
+	Timer->CCR2 = dutyCycleInClocks > 0 ? dutyCycleInClocks : 0;
 }
 
 void Timer_Start(TIM_TypeDef *Timer)
