@@ -17,16 +17,29 @@ void SPI_init()
 	SPI1->CR1 |= SPI_CR1_SSI;
 	
 	SPI1->CR1 |= SPI_CR1_SPE;
+	
+	GPIO_Set(GPIOA, GPIOA_SPI_NSS); 
+	
 }
 
-char SPI_read_write_message(int address)
+int SPI_read_write_message(int address, int val)
 {
-	SPI1->CR1 |= SPI_CR1_SPE;
+	int poub;
 	
+	GPIO_Reset(GPIOA, GPIOA_SPI_NSS);
 	while(!(SPI1->SR & SPI_SR_TXE)) {}
+		
 	SPI1->DR = address;
-	
+		
 	while(!(SPI1->SR & SPI_SR_RXNE)) {}
-
-	return SPI1->DR;
+	poub = SPI1->DR;
+	while(!(SPI1->SR & SPI_SR_TXE)) {}
+	SPI1->DR = val; // ecrire n'importe quoi pour attendre la réponse
+	while(!(SPI1->SR & SPI_SR_RXNE)) {}
+	val = SPI1->DR;
+	while(SPI1->SR & SPI_SR_BSY) {}
+	
+	GPIO_Set(GPIOA, GPIOA_SPI_NSS); 
+	return val;
 }
+
