@@ -24,7 +24,7 @@ int main(void)
 	GPIO_Init(GPIOC, GPIOC_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
 	
 	// PA1 - PWM Voilier
-	// GPIO_Init(GPIOA, GPIOA_TIMER2_PWM_OUTPUT_PIN2, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
+	GPIO_Init(GPIOA, GPIOA_TIMER2_PWM_OUTPUT_PIN2, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
 	// PA9 - Xbee USART TX
 	GPIO_Init(GPIOA, GPIOA_USART1_TX, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
@@ -99,7 +99,8 @@ int main(void)
 		// battery voltage
 		// sprintf(str, "%d", ADC1->DR * 13 / 12);
 		// girouette angle
-		// Timer_Set_PWM_DutyCycle(TIM5, 50);
+		// Timer_Set_PWM_DutyCycle(TIM2, 50);
+		Timer_Set_PWM_DutyCycle(TIM2, TIM4->CNT/(15));
 		sprintf(str, "%d", TIM4->CNT/4);
 		write_message(str);
 		SPI_read_write_message(0x36);
