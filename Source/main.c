@@ -18,8 +18,8 @@ int main(void)
 	GPIO_SetupClocks(GPIOB_CLOCK);
 	GPIO_SetupClocks(GPIOC_CLOCK);
 
-	// PB4 - Plateau
-	GPIO_Init(GPIOB, GPIOB_TIMER3_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
+	// PC6 - Plateau
+	GPIO_Init(GPIOC, GPIOC_TIMER3_PWM_OUTPUT_PIN, OUTPUT_2MHZ_ALTERNATE_PUSH_PULL);
 
 	// PC4 - Direction Plateau
 	GPIO_Init(GPIOC, GPIOC_DIRECTION_PLATEAU, OUTPUT_2MHZ_PUSH_PULL);
@@ -77,7 +77,7 @@ int main(void)
 	/******************  AFIO - GPIO Remap Setup  *******************/
 
 	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
-	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_PARTIALREMAP;
+	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_FULLREMAP;
 
 
 	/******************  SPI Setup  *******************/
@@ -106,9 +106,7 @@ int main(void)
 		// control boat sails
 		sail_pwm = 100 - (degree > 45 ? (100 * (degree - 45) / 135) : 0);
 		Timer_Set_PWM_Servo(TIM2, sail_pwm);
-		// ***** user messages *****
-		// girouette angle
-		sprintf(str, "girouette: %d°, pwm voilier: %d, angle roulis: %d, batterie: %dmV \n", degree, sail_pwm, 0, battery_voltage);
+		sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, 0, battery_voltage);
 		write_message(str);
 		SPI_read_write_message(0x36, 0x00);
 	};

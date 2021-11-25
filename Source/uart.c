@@ -24,7 +24,6 @@ void USART1_IRQHandler()
 	char direction = value_read > 0x64;
 	char speed = direction ? ~value_read : value_read;
 	Timer_Set_PWM_DutyCycle(TIM3, speed);
-	Timer_Set_PWM_Servo(TIM2, speed);
 	SPI1->CR2 |= SPI_CR2_SSOE;
 	direction ? GPIO_Set(GPIOC, GPIOC_DIRECTION_PLATEAU) : GPIO_Reset(GPIOC, GPIOC_DIRECTION_PLATEAU);
 }
