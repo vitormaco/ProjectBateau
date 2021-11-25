@@ -3,9 +3,17 @@
 #include "BSP.h"
 #include "gpio.h"
 
+void ( * callback)(void);
+
 void Timer_SetupClocks(TIMER_Clock_Type clock)
 {
-	RCC->APB1ENR |= clock;
+	if (clock == TIMER1_CLOCK) { //RCC_APB2ENR_TIM1EN
+		RCC->APB2ENR |= clock;
+		TIM1->ARR = 7200;
+		TIM1->PSC = 10000;
+	} else {
+		RCC->APB1ENR |= clock;
+	}
 }
 
 void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
@@ -52,4 +60,22 @@ void Timer_Start(TIM_TypeDef *Timer)
 void Timer_Stop(TIM_TypeDef *Timer)
 {
 	Timer->CR1 &= ~TIM_CR1_CEN;
+}
+
+void Timer_ActiveIT ( TIM_TypeDef  * Timer , char Prio, void (*IT_function) (void)) {
+	// Authorize interruption
+	// On met en 1 le bit0 (UIE) du registre DIER
+	Timer->DIER |= TIM_DIER_UIE;
+	callback = IT_function;
+	NVIC->ISER[0] |= (1 << TIM1_UP_IRQn);
+	NVIC->IP[TIM1_UP_IRQn] |= (Prio << 4);
+}
+
+void TIM1_UP_IRQHandler(void) { 
+
+    //Si il y a un d?bordement -> On ?teint le bit UIF
+    if (TIM1->SR & TIM_SR_UIF) {
+        TIM1->SR &= ~TIM_SR_UIF;
+    }
+		( * callback)();
 }

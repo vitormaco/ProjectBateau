@@ -10,15 +10,21 @@
 
 #define DATAX0 0x32
 
+char str[5];
+int degree, battery_voltage, sail_pwm;
+uint8_t RxData[6] = {0,0,0,0,0,0};
+int x,y,z;
+int result;
+double z_acc;
+
+
+void Callback(void) {
+	sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, result, battery_voltage);
+	write_message(str);
+}
+
 int main(void)
 {
-	char str[5];
-	int degree, battery_voltage, sail_pwm;
-	uint8_t RxData[6] = {0,0,0,0,0,0};
-	int x,y,z;
-	int result;
-	double z_acc;
-
 	/******************  GPIO Setup  *******************/
 
 	GPIO_SetupClocks(GPIOA_CLOCK);
@@ -66,6 +72,7 @@ int main(void)
 
 	/******************  Timers Setup  *******************/
 
+	Timer_SetupClocks(TIMER1_CLOCK);
 	Timer_SetupClocks(TIMER2_CLOCK);
 	Timer_SetupClocks(TIMER3_CLOCK);
 	Timer_SetupClocks(TIMER4_CLOCK);
@@ -100,9 +107,11 @@ int main(void)
 
 	/******************  Start execution  *******************/
 
-	Timer_Start(TIM3);
+	Timer_Start(TIM1);
 	Timer_Start(TIM2);
+	Timer_Start(TIM3);
 	ADC_Start(ADC1);
+	Timer_ActiveIT(TIM1 , 4, &Callback );
 
 	while (1)
 	{
@@ -115,15 +124,12 @@ int main(void)
 		// control boat sails
 		sail_pwm = 100 - (degree > 45 ? (100 * (degree - 45) / 135) : 0);
 		Timer_Set_PWM_Servo(TIM2, sail_pwm);
-		//sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, 0, battery_voltage);
-		//write_message(str);
+		// SPI
 		adxl345_read(DATAX0, RxData);
 		x = ((RxData[1]<<8)|RxData[0]);
 		y = ((RxData[3]<<8)|RxData[2]);
 		z = ((RxData[5]<<8)|RxData[4]);
 		z_acc = (double) 0.0078*z;
 		result = acos(z_acc)*180/(atan(1)*4);
-		sprintf(str, "%d\n", result);
-		write_message(str);
 	};
 }
