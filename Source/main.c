@@ -7,6 +7,11 @@
 #include "spi.h"
 #include <stdio.h>
 
+
+void Callback(void) {
+	
+}
+
 int main(void)
 {
 	char str[5];
@@ -36,8 +41,8 @@ int main(void)
 	// PA0 - Battery ADC
 	GPIO_Init(GPIOA, GPIOA_ADC1_INPUT0, INPUT_ANALOG);
 
-	// PA5 - Rotary Encoder IDX
-	// GPIO_Init(GPIOC, GPIOC_ROTARY_ENCODER_IDX, INPUT_PULL_UP_DOWN);
+	// PB0 - Rotary Encoder IDX
+	GPIO_Init(GPIOB, GPIOB_ROTARY_ENCODER_IDX, INPUT_PULL_UP_DOWN);
 
 	// PB6 - Timer Channel 1 - Rotary Encoder PHA
 	GPIO_Init(GPIOB, GPIOB_ROTARY_ENCODER_PHA, INPUT_PULL_UP_DOWN);
@@ -59,6 +64,7 @@ int main(void)
 
 	/******************  Timers Setup  *******************/
 
+	Timer_SetupClocks(TIMER1_CLOCK);
 	Timer_SetupClocks(TIMER2_CLOCK);
 	Timer_SetupClocks(TIMER3_CLOCK);
 	Timer_SetupClocks(TIMER4_CLOCK);
@@ -93,7 +99,9 @@ int main(void)
 
 	Timer_Start(TIM3);
 	Timer_Start(TIM2);
+	Timer_Start(TIM1);
 	ADC_Start(ADC1);
+	MyTimer_ActiveIT(TIM1 , 4, &Callback ) ;
 
 	while (1)
 	{

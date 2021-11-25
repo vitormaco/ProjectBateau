@@ -27,6 +27,7 @@ void GPIO_Init(GPIO_TypeDef *GPIO, char Pin, GPIO_Mode_Type Config);
 int GPIO_Read(GPIO_TypeDef *GPIO, char GPIO_Pin);
 void GPIO_Set(GPIO_TypeDef *GPIO, char GPIO_Pin);
 void GPIO_Reset(GPIO_TypeDef *GPIO, char GPIO_Pin);
+void GPIO_Reset_Timer(GPIO_TypeDef *GPIO, char GPIO_Pin);
 void GPIO_Toggle(GPIO_TypeDef *GPIO, char GPIO_Pin);
 
 #endif

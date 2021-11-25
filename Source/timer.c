@@ -3,9 +3,18 @@
 #include "BSP.h"
 #include "gpio.h"
 
+
+void ( * callback)(void);
+
 void Timer_SetupClocks(TIMER_Clock_Type clock)
 {
-	RCC->APB1ENR |= clock;
+	if (clock == TIMER1_CLOCK) { //RCC_APB2ENR_TIM1EN
+		RCC->APB2ENR |= clock;
+		TIM1->ARR = 720;
+		TIM1->PSC = 1;
+	} else {
+		RCC->APB1ENR |= clock;
+	}
 }
 
 void Timer_Init_PWM_Mode(TIM_TypeDef *Timer, int dutyCycleInPercent)
@@ -28,6 +37,31 @@ void Timer_Init_Encoder_Mode(TIM_TypeDef *Timer){
 	Timer->CCMR1 |= TIM_CCMR1_CC1S & 0x1;
 	Timer->CCMR1 |= TIM_CCMR1_CC2S & 0x1;
 	Timer->CR1 |= TIM_CR1_CEN;
+}
+
+void MyTimer_ActiveIT ( TIM_TypeDef  * Timer , char Prio, void (*IT_function) (void)) {
+	// Authorize interruption
+	// On met en 1 le bit0 (UIE) du registre DIER
+	Timer->DIER |= TIM_DIER_UIE;
+	callback = IT_function;
+	
+	// Configuration du Timer correspondant sur le coeur
+	if (Timer == TIM1){
+		NVIC->ISER[0] |= (1 << TIM1_UP_IRQn);
+		NVIC->IP[TIM1_UP_IRQn] |= (Prio << 4);
+		
+	}else if (Timer == TIM2){
+		NVIC->ISER[0] |= (1 << TIM2_IRQn);
+		NVIC->IP[TIM1_UP_IRQn] |= (Prio << 4);
+		
+	}else if (Timer == TIM3){
+		NVIC->ISER[0] |= (1 << TIM3_IRQn);
+		NVIC->IP[TIM3_IRQn] |= (Prio << 4);
+		
+	}else if (Timer == TIM4){
+		NVIC->ISER[0] |= (1 << TIM4_IRQn);
+		NVIC->IP[TIM4_IRQn] |= (Prio << 4);
+	}
 }
 
 void Timer_Set_PWM_DutyCycle(TIM_TypeDef *Timer, int dutyCycleInPercent)

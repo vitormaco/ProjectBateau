@@ -32,6 +32,8 @@ void GPIO_Reset(GPIO_TypeDef *GPIO, char GPIO_Pin)
 	GPIO->BSRR |= 0x1 << (GPIO_Pin + 16);
 }
 
+void GPIO_Reset_Timer(GPIO_TypeDef *GPIO, char GPIO_Pin) {}
+
 void GPIO_Toggle(GPIO_TypeDef *GPIO, char GPIO_Pin)
 {
 	GPIO->ODR ^= 0x1 << GPIO_Pin;
