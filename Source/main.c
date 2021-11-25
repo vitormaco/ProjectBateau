@@ -6,11 +6,18 @@
 #include "adc.h"
 #include "spi.h"
 #include <stdio.h>
+#include <math.h>
+
+#define DATAX0 0x32
 
 int main(void)
 {
 	char str[5];
 	int degree, battery_voltage, sail_pwm;
+	uint8_t RxData[6] = {0,0,0,0,0,0};
+	int x,y,z;
+	int result;
+	double z_acc;
 
 	/******************  GPIO Setup  *******************/
 
@@ -82,7 +89,9 @@ int main(void)
 
 	/******************  SPI Setup  *******************/
 
-	SPI_init();
+	SPI_Config();
+	SPI_Enable();
+	adxl345_init();
 	
 	/******************  Interruptions  *******************/
 
@@ -106,8 +115,15 @@ int main(void)
 		// control boat sails
 		sail_pwm = 100 - (degree > 45 ? (100 * (degree - 45) / 135) : 0);
 		Timer_Set_PWM_Servo(TIM2, sail_pwm);
-		sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, 0, battery_voltage);
+		//sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, 0, battery_voltage);
+		//write_message(str);
+		adxl345_read(DATAX0, RxData);
+		x = ((RxData[1]<<8)|RxData[0]);
+		y = ((RxData[3]<<8)|RxData[2]);
+		z = ((RxData[5]<<8)|RxData[4]);
+		z_acc = (double) 0.0078*z;
+		result = acos(z_acc)*180/(atan(1)*4);
+		sprintf(str, "%d\n", result);
 		write_message(str);
-		SPI_read_write_message(0x36, 0x00);
 	};
 }
