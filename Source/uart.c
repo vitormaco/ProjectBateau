@@ -40,8 +40,4 @@ void write_message(char message[])
 		{
 		};
 	}
-	USART1->DR = '\n';
-	while (!(USART1->SR & USART_SR_TC))
-	{
-	};
 }

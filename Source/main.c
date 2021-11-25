@@ -10,7 +10,7 @@
 int main(void)
 {
 	char str[5];
-	int degree;
+	int degree, battery_voltage, sail_pwm;
 
 	/******************  GPIO Setup  *******************/
 
@@ -97,17 +97,18 @@ int main(void)
 
 	while (1)
 	{
-		// battery voltage
-		// sprintf(str, "%d", ADC1->DR * 13 / 12);
-		// girouette 
+		// adc reads 12/13 of the battery value (voltage divider)
+		battery_voltage = ADC1->DR * 13 / 12;
+		// angle is measure with 1/4 of a degree precision
 		degree = TIM4->CNT/4;
+		// normalise angles to 0 < degree < 180
 		degree = degree < 180 ? degree : 360 - degree;
-		if ( degree < 45 ) {
-			Timer_Set_PWM_Servo(TIM2, 100);
-		} else {
-			Timer_Set_PWM_Servo(TIM2, 100 - 100 * (degree - 45) / 135);
-		}
-		sprintf(str, "%d", TIM4->CNT/4);
+		// control boat sails
+		sail_pwm = 100 - (degree > 45 ? (100 * (degree - 45) / 135) : 0);
+		Timer_Set_PWM_Servo(TIM2, sail_pwm);
+		// ***** user messages *****
+		// girouette angle
+		sprintf(str, "girouette: %d°, pwm voilier: %d, angle roulis: %d, batterie: %dmV \n", degree, sail_pwm, 0, battery_voltage);
 		write_message(str);
 		SPI_read_write_message(0x36, 0x00);
 	};
