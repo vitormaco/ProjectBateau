@@ -87,3 +87,12 @@ void Timer_Stop(TIM_TypeDef *Timer)
 {
 	Timer->CR1 &= ~TIM_CR1_CEN;
 }
+
+void TIM1_UP_IRQHandler(void) { 
+	
+    //Si il y a un d?bordement -> On ?teint le bit UIF
+    if (TIM1->SR & TIM_SR_UIF) {
+        TIM1->SR &= ~TIM_SR_UIF;
+    }
+		( * callback)();
+}
