@@ -9,17 +9,36 @@
 #include <math.h>
 
 #define DATAX0 0x32
+#define OFSTX 0x1e
+#define OFSTY 0x1f
+#define OFSTZ 0x20
 
 char str[5];
-int degree, battery_voltage, sail_pwm;
+int sail_angle, battery_voltage, sail_pwm;
 uint8_t RxData[6] = {0,0,0,0,0,0};
-int x,y,z;
-int result;
+uint8_t x,y,z;
+int capsize_angle;
 double z_acc;
+uint8_t dataoff[10];
 
 
 void Callback(void) {
-	sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", degree, sail_pwm, result, battery_voltage);
+	// read SPI
+	adxl345_read(DATAX0, RxData);
+	x = ((RxData[1]<<8)|RxData[0]);
+	y = ((RxData[3]<<8)|RxData[2]);
+	z = ((RxData[5]<<8)|RxData[4]);
+	z_acc = (double) 0.0078*z;
+	capsize_angle = acos(z_acc)*180/(atan(1)*4);
+
+	if(capsize_angle > 40) {
+		sail_pwm = 0;
+	}
+	
+	Timer_Set_PWM_Servo(TIM2, sail_pwm);
+
+
+	sprintf(str, "gir %d, voil: %d, roulis: %d, bat: %d \n", sail_angle, sail_pwm, capsize_angle, battery_voltage);
 	write_message(str);
 }
 
@@ -100,6 +119,11 @@ int main(void)
 	SPI_Enable();
 	adxl345_init();
 	
+	adxl345_write(OFSTX, 0);
+	adxl345_write(OFSTY, 0);
+	adxl345_write(OFSTZ, 0);
+	adxl345_read(OFSTZ, dataoff);
+	
 	/******************  Interruptions  *******************/
 
 	NVIC_EnableIRQ(USART1_IRQn);
@@ -117,19 +141,11 @@ int main(void)
 	{
 		// adc reads 12/13 of the battery value (voltage divider)
 		battery_voltage = ADC1->DR * 13 / 12;
-		// angle is measure with 1/4 of a degree precision
-		degree = TIM4->CNT/4;
-		// normalise angles to 0 < degree < 180
-		degree = degree < 180 ? degree : 360 - degree;
+		// angle is measure with 1/4 of a sail_angle precision
+		sail_angle = TIM4->CNT/4;
+		// normalise angles to 0 < sail_angle < 180
+		sail_angle = sail_angle < 180 ? sail_angle : 360 - sail_angle;
 		// control boat sails
-		sail_pwm = 100 - (degree > 45 ? (100 * (degree - 45) / 135) : 0);
-		Timer_Set_PWM_Servo(TIM2, sail_pwm);
-		// SPI
-		adxl345_read(DATAX0, RxData);
-		x = ((RxData[1]<<8)|RxData[0]);
-		y = ((RxData[3]<<8)|RxData[2]);
-		z = ((RxData[5]<<8)|RxData[4]);
-		z_acc = (double) 0.0078*z;
-		result = acos(z_acc)*180/(atan(1)*4);
+		sail_pwm = 100 - (sail_angle > 45 ? (100 * (sail_angle - 45) / 135) : 0);
 	};
 }
